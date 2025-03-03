@@ -1,0 +1,34 @@
+name: Build DaisyUI CSS
+
+on:
+  push:
+    branches:
+      - main  # Adjust this to your working branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18  # Use the Node.js version needed
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build DaisyUI CSS
+        run: npm run build:css
+
+      - name: Commit and Push Changes
+        if: github.actor != 'github-actions[bot]'  # Prevent infinite loop
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions@users.noreply.github.com"
+          git add .
+          git commit -m "Auto-generate DaisyUI CSS [skip ci]" || echo "No changes to commit"
+          git push
